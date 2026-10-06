@@ -246,8 +246,8 @@ void procesarMedicion()
   uint32_t b;
   if (leerTiemposPasada(a, b) && b > a)
   {
-    float dt = (b - a) / 1000000.0;
-    UltimaVel = d / dt; // Con a  y b no se reescribe a mitad de ejecucion por interrupt, /1000000 para pasar a segundos  --> m/s
+    uint_32 dt = (b - a);
+    UltimaVel = d / (dt/1000000); // Con a  y b no se reescribe a mitad de ejecucion por interrupt, /1000000 para pasar a segundos  --> m/s
     MedicionNueva = true;
     N_Pasadas++;
     float Segundo = millis() / 1000.0;
