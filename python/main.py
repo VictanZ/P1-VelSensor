@@ -67,7 +67,7 @@ def main():
 
         ruta_archivo_actual = crear_nuevo_archivo()    #Crea el arhcivo nuevo y me da la ruta
         archivo_actual = open(ruta_archivo_actual, "a")    # Abre el archivo en modo append
-        archivo_actual.write("n. de pasada, dt, segundo, velocidad, nivel de motor\n") 
+        archivo_actual.write("n.de pasada,dt,segundo,velocidad,nivelmotor\n") 
 
 
         while True:
