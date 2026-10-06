@@ -10,11 +10,11 @@ BAUDIOS = 115200
 
 Carpeta_Destino = r"C:\Users\victa\Desktop\Proyectos\Carpetas Proyectos\Proyecto 1 - VelSensor\Datos.Telemetría"
 
-lista_pasadas = []
-lista_dt = []
-lista_segundo = []
-lista_ultimavel = []
-lista_nivelmotor = []
+lista_pasadas = np.array([])
+lista_dt = np.array([])
+lista_segundo = np.array([])
+lista_ultimavel = np.array([])
+lista_nivelmotor = np.array([])
 
 
 def crear_nuevo_archivo():
@@ -89,44 +89,60 @@ def main():
                 texto_limpio = ",".join(map(str, Datos))     # Convierte todos los números a texto de golpe y los une con comas, sin corchetes:
                 archivo_actual.write(f"{texto_limpio}\n")
                 archivo_actual.flush()                  # Guarda los datos en disco inmediatamente, asi no me arriesgo a perderlos si se cierra
-
                 #Al hacerlo con "Datos" en vez de "linea", ya me aseguro de que no esten corruptos, este todo y tal
 
-# ==============================================================================
-# ¿POR QUÉ USAR CSV.WRITER AQUÍ
-# 
-# Si tu función 'parsear_trama' te devuelve una lista de Python (por ejemplo: 
-# [1, 0.5, 12.4, 30.1, 2]), usar f"{Datos}" escribirá literalmente los corchetes 
-# y los espacios en tu documento:
-# "[1, 0.5, 12.4, 30.1, 2]"
-# 
-# Esto rompe el formato CSV. Cuando intentes abrir este archivo en MATLAB o Excel 
-# para analizar la dinámica del sistema, los corchetes ensuciarán los números y 
-# tendrás que limpiarlos de nuevo.
-# 
-# La herramienta csv.writer toma la lista de datos y la escribe eliminando los 
-# corchetes y usando solo las comas necesarias,
-#  Detecta las comas conflictivas y aísla el texto automáticamente ("Motor 1, fallo") para que permanezca en su columna correspondiente.
-# Permite crear los títulos de columna pasando una simple lista: writer.writerow(["Tiempo", "Velocidad", "Altitud"]):
-#
-#
-# CÓMO SERÍAN LAS LÍNEAS DE CÓDIGO PARA USARLO:
-#
-# 1   import csv         # <-- 1. Añade esto al principio del todo junto al resto de imports
+                if Datos[1] == 20 and len(lista_pasadas) == 20:   # Doble comprobacion para asegurarme de que coinciden
+                    print("20 lecturas disponibles, realizando analisis")
+
+                    MediaVel = np.mean(lista_ultimavel)
+                    DesviacionEstandarVel = np.std(lista_ultimavel)
+
+                    conteos = np.bincount(lista_nivelmotor)
+                    ModaNivelMotor = np.argmax(conteos)
+                        #O import statistics as stat , moda = stat.mode(datos)
 
 
-# 2. Abre el archivo con newline='' y crea el escritor CSV
-#            archivo_actual = open(ruta_archivo_actual, "a", newline='') 
-#           escritor_csv = csv.writer(archivo_actual)
+                    print(f"Velocidad media actual: {MediaVel:.4f}\n")
+                    print(f"Desviacion estándar de la velocidad: {DesviacionEstandarVel:.4f}")
+                    print(f"Nivel de motor más repetido: {ModaNivelMotor}")
+                
 
 
-# 3.  Escribe la primera fila con los nombres de las columnas
-#            escritor_csv.writerow(["Pasadas", "dt_ms", "Tiempo_s", "Velocidad", "Nivel_Motor"])
+            # ==============================================================================
+            # ¿POR QUÉ USAR CSV.WRITER AQUÍ
+            # 
+            # Si tu función 'parsear_trama' te devuelve una lista de Python (por ejemplo: 
+            # [1, 0.5, 12.4, 30.1, 2]), usar f"{Datos}" escribirá literalmente los corchetes 
+            # y los espacios en tu documento:
+            # "[1, 0.5, 12.4, 30.1, 2]"
+            # 
+            # Esto rompe el formato CSV. Cuando intentes abrir este archivo en MATLAB o Excel 
+            # para analizar la dinámica del sistema, los corchetes ensuciarán los números y 
+            # tendrás que limpiarlos de nuevo.
+            # 
+            # La herramienta csv.writer toma la lista de datos y la escribe eliminando los 
+            # corchetes y usando solo las comas necesarias,
+            #  Detecta las comas conflictivas y aísla el texto automáticamente ("Motor 1, fallo") para que permanezca en su columna correspondiente.
+            # Permite crear los títulos de columna pasando una simple lista: writer.writerow(["Tiempo", "Velocidad", "Altitud"]):
+            #
+            #
+            # CÓMO SERÍAN LAS LÍNEAS DE CÓDIGO PARA USARLO:
+            #
+            # 1   import csv         # <-- 1. Añade esto al principio del todo junto al resto de imports
 
 
-# 4.   if archivo_actual:
-#                   escritor_csv.writerow(Datos)     Escribe la lista limpia en el CSV
-# ==============================================================================
+            # 2. Abre el archivo con newline='' y crea el escritor CSV
+            #            archivo_actual = open(ruta_archivo_actual, "a", newline='') 
+            #           escritor_csv = csv.writer(archivo_actual)
+
+
+            # 3.  Escribe la primera fila con los nombres de las columnas
+            #            escritor_csv.writerow(["Pasadas", "dt_ms", "Tiempo_s", "Velocidad", "Nivel_Motor"])
+
+
+            # 4.   if archivo_actual:
+            #                   escritor_csv.writerow(Datos)     Escribe la lista limpia en el CSV
+            # ==============================================================================
                 
 
 
