@@ -3,8 +3,11 @@ import pandas as pd
 import serial
 import time
 import os
+from collections import deque
+import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
 
-PUERTO = 'COM3'
+PUERTO = "COM3"
 BAUDIOS = 115200
 
 
@@ -52,6 +55,16 @@ def parsear_trama(linea: str):
     except Exception:
         return None
 
+N = 10
+ventana_pasadas = deque([0]*N, maxlen=N)
+ventana_vel = deque([0.0]*N, maxlen=N)
+
+plt.ion()                      # permite refrescar sin bloquear el bucle
+fig, ax = plt.subplots()
+lineafig, = ax.plot(list(ventana_pasadas), list(ventana_vel), lw=1.3)
+ax.set_ylim(0, 2)
+ax.set_xlabel("Muestra"); ax.set_ylabel("Velocidad (m/s)")
+ax.grid(alpha=0.3)
 
 
 def main():
@@ -74,6 +87,9 @@ def main():
         n_datos = 0
         Datos_suficientes = False
         
+
+
+
         while True:
             linea_cruda = ser.readline()
             if not linea_cruda:
@@ -98,6 +114,19 @@ def main():
                 archivo_actual.write(f"{texto_limpio}\n")
                 archivo_actual.flush()                  # Guarda los datos en disco inmediatamente, asi no me arriesgo a perderlos si se cierra
                 #Al hacerlo con "Datos" en vez de "linea", ya me aseguro de que no esten corruptos, este todo y tal
+
+
+                ventana_pasadas.append(Datos[0])  #Para pintar en la grafica y que salgan los num correctos
+                ventana_vel.append(Datos[3])
+            
+                lineafig.set_xdata(ventana_pasadas)
+                lineafig.set_ydata(ventana_vel)
+                ax.set_xlim(ventana_pasadas[0], ventana_pasadas[-1])   #volver a poner los limites del recuadr, si no las nuevas pasadas saldrian por la derechafuera de vision)
+            
+                plt.pause(0.001)        # Refresca la ventana y pausa momentaneamente la interfaz grafica
+
+
+
 
                 if n_datos == 10:
                     n_datos = 0
@@ -125,6 +154,8 @@ def main():
                 Tramas_descartadas += 1
                 archivo_actual.write("Nan,Nan,Nan,Nan,Nan\n")
                 archivo_actual.flush()
+
+
 
 
 
