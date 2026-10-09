@@ -30,8 +30,8 @@ constexpr uint16_t Refresco_OLED = 150;
 constexpr uint16_t Buzzer_Boton = 20;   // Al cambiar de nivel de potencia
 constexpr uint16_t Buzzer_Exceso = 150; // Al detectar exceso de vel
 
-constexpr uint16_t TiemposubidaNivel = 100;
-constexpr uint16_t TiempobajadaNivel = 100;
+constexpr uint16_t TiemposubidaNivel = 250;
+constexpr uint16_t TiempobajadaNivel = 250;
 
 // Velocidad
 constexpr float Limite_Vel = 1.0f; // m/s
@@ -46,8 +46,8 @@ bool Clic_2;
 
 // Estado de la medicion
 uint8_t N_Pasadas = 0;
-float UltimaVel = 0.0f;
-float MaxVel = 0.0f;
+double UltimaVel = 0.0;
+double MaxVel = 0.0;
 
 // Estado del Sistema
 bool Sistema_Encendido = false;
@@ -59,7 +59,6 @@ uint16_t DuracionBuzzerActual = 0;
 // Temporizadores
 uint32_t t_Actual_MS;
 
-uint32_t UltimoCambioEstado = 0;
 uint32_t t_Ultimo_Refresco_OLED = 0;
 uint32_t t_Buzzer_endendido = 0;
 bool Buzzer_Activo = false;
@@ -208,14 +207,14 @@ void gestionarBotones()
   }
 
   // Cambio encendido y apagado con clic simultaneo
-  if (intervalobotones < Pulso_Simultaneo_min && millis() - t_Actual_MS > Pulso_Simultaneo_max)
+  if (Boton_1 == LOW && Boton_2 == LOW && intervalobotones < Pulso_Simultaneo_min && millis() - t_Actual_MS > Pulso_Simultaneo_max)
   {
     Sistema_Encendido = !Sistema_Encendido;
     t_Actual_MS = millis();
   }
   else if (Sistema_Encendido)
   {
-    if (Boton_1 == LOW && Nivel_Motor_Actual < 4 && millis() - ultimasubida > TiemposubidaNivel)
+    if (Boton_1 == LOW && Nivel_Motor_Actual < Num_Niveles - 1 && millis() - ultimasubida > TiemposubidaNivel)
     {
       ultimasubida = millis();
       Nivel_Motor_Actual++;
