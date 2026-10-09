@@ -82,7 +82,7 @@ bool leerTiemposPasada(uint32_t &a, uint32_t &b);
 void gestionarBotones();
 void gestionarMotor();
 void procesarMedicion();
-void enviarTelemetria(float dt, float Segundo);
+void enviarTelemetria(uint32_t dt, float Segundo);
 void actualizarOLED();
 void gestionarBuzzer();
 
@@ -246,8 +246,8 @@ void procesarMedicion()
   uint32_t b;
   if (leerTiemposPasada(a, b) && b > a)
   {
-    uint_32 dt = (b - a);
-    UltimaVel = d / (dt/1000000); // Con a  y b no se reescribe a mitad de ejecucion por interrupt, /1000000 para pasar a segundos  --> m/s
+    uint32_t dt = (b - a);
+    UltimaVel = d / (dt / 1000000.0); // Con a  y b no se reescribe a mitad de ejecucion por interrupt, /1000000 para pasar a segundos  --> m/s
     MedicionNueva = true;
     N_Pasadas++;
     float Segundo = millis() / 1000.0;
@@ -262,7 +262,7 @@ void procesarMedicion()
   }
 }
 
-void enviarTelemetria(float dt, float Segundo)
+void enviarTelemetria(uint32_t dt, float Segundo)
 {
   Serial.print(N_Pasadas);
   Serial.print(",");
