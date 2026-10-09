@@ -1,11 +1,10 @@
 import numpy as np
-import pandas as pd
 import serial
 import time
 import os
 from collections import deque
 import matplotlib.pyplot as plt
-from matplotlib.animation import FuncAnimation
+
 
 PUERTO = "COM3"
 BAUDIOS = 115200
@@ -93,6 +92,7 @@ def main():
         while True:
             linea_cruda = ser.readline()
             if not linea_cruda:
+                plt.pause(0.01)
                 continue
 
             linea = linea_cruda.decode('utf-8', errors='ignore').strip()   #Pasa los bytes a texto
@@ -123,23 +123,20 @@ def main():
                 lineafig.set_ydata(ventana_vel)
                 ax.set_xlim(ventana_pasadas[0], ventana_pasadas[-1])   #volver a poner los limites del recuadr, si no las nuevas pasadas saldrian por la derechafuera de vision)
             
-                plt.pause(0.001)        # Refresca la ventana y pausa momentaneamente la interfaz grafica
+                fig.canvas.draw()           # Dibuja los nuevos datos en la pantalla
+                fig.canvas.flush_events()   # Procesa los eventos de la ventana para que no se cuelgue
 
 
 
 
                 if n_datos == 10:
                     n_datos = 0
-                    Datos_suficientes = True
-
-                if Datos_suficientes:
-                    Datos_suficientes = False
 
                     np_lista_ultimavel = np.array(lista_ultimavel)    #Paso a array de np, no puedo declararlo al inciio asi porque no funcionaria appen, habria que hacerlo de otra forma mas lenta
                     np_lista_nivelmotor = np.array(lista_nivelmotor) 
                     
                     MediaVel = np.mean(np_lista_ultimavel)
-                    DesviacionEstandarVel = np.std(np_lista_ultimavel)
+                    DesviacionEstandarVel = np.std(np_lista_ultimavel, ddof=1)    # Divide entre n-1 en vez de n (desviacion muestral)
 
                     conteos = np.bincount(np_lista_nivelmotor)
                     ModaNivelMotor = np.argmax(conteos)
@@ -153,7 +150,7 @@ def main():
             else: 
                 Tramas_descartadas += 1
                 archivo_actual.write("Nan,Nan,Nan,Nan,Nan\n")
-                archivo_actual.flush()
+                archivo_actual.flush() 
 
 
 
