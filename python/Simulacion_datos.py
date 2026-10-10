@@ -70,9 +70,9 @@ class SimuladorSerial:
             return b"trama,corrupta,incompleta\n"
             
         self.numero_pasada += 1
-        dt = random.randint(10, 50)  # dt simulado en ms
-        self.tiempo_acumulado += dt / 1000.0  # segundos acumulados
-        velocidad = random.uniform(0.6, 1.3)  # velocidad dentro del rango (0.6 a 1.3)
+        dt = random.randint(50000, 200000)  # dt simulado en us
+        self.tiempo_acumulado  = self.tiempo_acumulado + random.uniform(0.32, 1.5)  # segundos acumulados
+        velocidad = 84000/dt  # velocidad dentro del rango (0.6 a 1.3)
         nivel_motor = random.randint(1, 5)  # niveles de motor del 1 al 5
         
         # El simulador devuelve bytes terminados en nueva línea, igual que serial.Serial
