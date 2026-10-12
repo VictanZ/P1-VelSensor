@@ -48,3 +48,17 @@ disp(Tabla_Estadisticas_manual);
 Tabla_Estadisticas_automatica = groupsummary(T, 'nivel', {'mean','std'}, 'Vel_Teorica'); % T = tabla de datos, nivel = clasificacion, mean y std = valores a calcualr, Vel_Teorica = Datos sobre lso que relalizar
 disp(Tabla_Estadisticas_automatica);
 
+
+Vel_Exceso = T.Vel_Teorica(T.Vel_Teorica > param.v_max);
+n_Exceso = T.n_pasada(T.Vel_Teorica > param.v_max);
+ensayo_Exceso = T.ensayo(T.Vel_Teorica > param.v_max);
+
+n_pasadas_Exceso = numel(Vel_Exceso);
+fprintf("Número de pasadas a exceso de velocidad: %.0f \n", n_pasadas_Exceso);
+
+Tabla_Excesos = table(ensayo_Exceso, n_Exceso, Vel_Exceso);
+NombresExcesos = {'Ensayo', 'n_pasada', 'Velocidad'};
+Tabla_Excesos.Properties.VariableNames = NombresExcesos;
+disp(Tabla_Excesos);
+
+
