@@ -1,10 +1,10 @@
-function s = estadisticaBasica(v);
+function s = estadisticaBasica(v)
     arguments   % Comprobar la entrada (da error si no es correcta)
         v (:,1) double {mustBeFinite}
     end
 
     if numel(v) < 2
-        error("estadisticaBasica: Datos insuficientes", 'Se necesitan al menos 2 datos (llegaron %d)', numel(v));
+        error("estadisticaBasica:Datosinsuficientes", 'Se necesitan al menos 2 datos (llegaron %d)', numel(v));
     end
 
     s = struct();
