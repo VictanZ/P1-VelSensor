@@ -39,7 +39,7 @@ end
 
 Tabla_Estadisticas_manual = array2table(matriz_datos);  % Si uso solo table(matriz_datos) genera todo en una sola columna
 
-nombresColumnas = {'Nivel', 'PWM', 'Muestras', 'Media', 'Desv. tipica', 'Coef. Variacion', 'Error Tipico', 'Intervalo Confianza 95% (lim superior)', 'Intervalo Confianza 95% (lim inferior)'};
+nombresColumnas = {'Nivel', 'PWM', 'Muestras', 'Media', 'Desv_tipica', 'Coef_Var', 'Error_Tipico', 'Intervalo_Confianza(lim_inferior)', 'Intervalo_Confianza(lim_superior)'};
 Tabla_Estadisticas_manual.Properties.VariableNames = nombresColumnas; 
 
 disp(Tabla_Estadisticas_manual);
