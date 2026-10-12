@@ -39,7 +39,7 @@ end
 
 Tabla_Estadisticas_manual = array2table(matriz_datos);  % Si uso solo table(matriz_datos) genera todo en una sola columna
 
-nombresColumnas = {'Nivel', 'PWM', 'Muestras', 'Media', 'Desv_tipica', 'Coef_Var', 'Error_Tipico', 'Intervalo_Confianza(lim_inferior)', 'Intervalo_Confianza(lim_superior)'};
+nombresColumnas = {'Nivel', 'PWM', 'Muestras', 'Media', 'Desv_tipica', 'Coef_Var', 'Error_Tipico', 'Intervalo_inf', 'Intervalo_sup'};
 Tabla_Estadisticas_manual.Properties.VariableNames = nombresColumnas; 
 
 disp(Tabla_Estadisticas_manual);
@@ -61,4 +61,5 @@ NombresExcesos = {'Ensayo', 'n_pasada', 'Velocidad'};
 Tabla_Excesos.Properties.VariableNames = NombresExcesos;
 disp(Tabla_Excesos);
 
-
+ruta_salida = fullfile(param.ruta_resultados, 'P1_estadistica.mat');
+save(ruta_salida, 'T', 'Tabla_Estadisticas_manual', 'Tabla_Excesos', 'V_global', 'param')
