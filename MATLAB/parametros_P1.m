@@ -5,8 +5,7 @@ param.sep_media = mean(param.sep_medidas_m);
 param.sep_desv = std(param.sep_medidas_m);
 
 param.resol_micros = 0.000004; % segundos = 4 microsegundos, es un dato del el arduino UNO
-param.v_min = 0.2; % m/s
-param.v_max = 2; % m/s
+param.v_max = 1; % m/s
 
 param.PWM = [0, 64 * 100/255, 128 * 100/255, 192 * 100/255, 100]; % Porcentaje de potencia
 param.num_niveles = numel(param.PWM); % Numero de objetos, size devuelve 1 * 5
