@@ -11,7 +11,7 @@ ensayos = unique(T.ensayo);
 niveles = unique(T.nivel);
 colores = lines(numel(niveles));
 for e = 1:numel(ensayos)
-    fig_vel_pasada(e) = figure("Name", "Velocidad de cada pasada del ensayo" + ensayos(e));
+    fig_vel_pasada(e) = figure("Name", "Velocidad de cada pasada del ensayo " + ensayos(e));
     plot(T.n_pasada(T.ensayo == ensayos(e)),  T.Vel_Teorica(T.ensayo == ensayos(e)), 'black-', 'HandleVisibility', 'off')   %Linea negra que une todos los puntos en orden (lo primero para que quede debajo)
     hold on;
     for k = 1:numel(niveles)
@@ -99,3 +99,12 @@ ylabel("Velocidad (m/s)");
 grid on;
 
 title(tl, "Distribucion de la velocidad por nivel");
+
+exportgraphics(fig_vel_nivel, fullfile(ruta_figuras, "vel_por_nivel.png"), 'Resolution', 300);
+exportgraphics(fig_vel_pwm, fullfile(ruta_figuras, "vel_frente_pwm.png"), 'Resolution',300);
+exportgraphics(fig_dist, fullfile(ruta_figuras, "distribucion_por_nivel.png"), 'Resolution', 300);
+
+for e = 1:numel(ensayos)
+    nombre = "vel_pasadas_" + erase(ensayos(e), ".csv") + ".png";  % erase quita .csv del nombre
+    exportgraphics(fig_vel_pasada(e), fullfile(ruta_figuras, nombre), 'Resolution', 300);
+end
