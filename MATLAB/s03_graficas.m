@@ -76,3 +76,26 @@ ylabel("Velocidad (m/s)");
 legend('Location', 'best');
 ylim([0 2]);
 
+
+
+fig_dist = figure("Name", "Distribucion de velocidades");
+tl = tiledlayout(1, 2, 'TileSpacing', 'compact', 'Padding', 'compact');
+
+nexttile; % panel izquierdo
+hold on
+for k = 1:numel(niveles)
+    histogram(T.Vel_Teorica(T.nivel == niveles(k)),'BinWidth', 0.05, 'FaceColor', colores(k,:), 'DisplayName', sprintf("Nivel %d", niveles(k)));   % Sin el binwidth, hace las barras de cada nivel de un grosor distinto, se solapan
+end
+hold off;
+xlabel("Velocidad (m/s)");
+ylabel("Nº de pasadas");
+legend;
+grid on;
+
+nexttile; % panel derecho
+boxplot(T.Vel_Teorica, T.nivel);   % diagrama de caja y bigotes  (datos, grupos)
+xlabel("Nivel");
+ylabel("Velocidad (m/s)");
+grid on;
+
+title(tl, "Distribucion de la velocidad por nivel");
