@@ -172,3 +172,8 @@ title(tl2, "Propagacion por Monte Carlo (N = 1e5)");
 exportgraphics(fig_inc_pasadas, fullfile(ruta_figuras, "inc_errorbar_pasadas.png"), 'Resolution', 300);
 exportgraphics(fig_inc_contrib, fullfile(ruta_figuras, "inc_contribuciones.png"), 'Resolution', 300);
 exportgraphics(fig_inc_mc, fullfile(ruta_figuras, "inc_montecarlo.png"), 'Resolution', 300);
+
+
+
+ruta_salida = fullfile(param.ruta_resultados, 'P1_incertidumbre.mat');
+save(ruta_salida, 'T', 'Tabla_Incertidumbre', 'mc', 'idx_mc', 'sigma_d', 'param')
