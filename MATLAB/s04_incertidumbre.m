@@ -91,3 +91,84 @@ fprintf("  de ellas, exceso seguro: %.0f , dudoso: %.0f \n", sum(exceso_seguro),
 if any(exceso_dudoso)
     disp(T(exceso_dudoso, {'ensayo', 'n_pasada', 'Vel_Teorica', 'U_v'}));
 end
+
+
+
+
+
+
+%Figuras
+
+colores = lines(numel(niveles));
+ruta_figuras = fullfile(param.ruta_figuras, 'graficas_P1');
+
+if ~isfolder(ruta_figuras)
+    mkdir(ruta_figuras);
+end
+
+% Figura 1: velocidad de cada pasada con su incertidumbre
+fig_inc_pasadas = figure("Name", "Velocidad de cada pasada con incertidumbre");
+hold on
+
+for k = 1:numel(niveles)
+    mascara = (T.nivel == niveles(k));
+    x_pasada = find(mascara); % posicion global de cada pasada en T
+    errorbar(x_pasada, T.Vel_Teorica(mascara), T.U_v(mascara), '.', 'Color', colores(k, :), 'MarkerFaceColor', colores(k, :), 'DisplayName', sprintf("Nivel %d", niveles(k)));
+end
+
+yline(param.v_max, 'r--', 'Límite de velocidad', 'HandleVisibility', 'off');
+hold off;
+title("Velocidad de cada pasada con su incertidumbre expandida (k = 2)", sprintf("Incertidumbre media: ± %.4f m/s (las barras casi no se ven a esta escala)", mean(T.U_v)));
+xlabel("Nº de pasada (orden global)");
+ylabel("Velocidad (m/s)");
+legend('Location', 'best');
+grid on;
+
+% Figura 2: de donde viene la incertidumbre
+fig_inc_contrib = figure("Name", "Contribuciones a la incertidumbre");
+tl = tiledlayout(1, 2, 'TileSpacing', 'compact', 'Padding', 'compact');
+
+nexttile; % panel izquierdo: distancia frente a tiempo
+bar(Tabla_Incertidumbre.Nivel, [Tabla_Incertidumbre.Er_d_pct, Tabla_Incertidumbre.Er_t_pct]);
+set(gca, 'YScale', 'log'); % escala log: si no, la barra del tiempo ni se veria
+xlabel("Nivel");
+ylabel("Error relativo (%)");
+legend("Distancia (d)", "Tiempo (dt)", 'Location', 'best');
+title("Que domina el error del sensor");
+grid on;
+
+nexttile; % panel derecho: error del sensor frente a dispersion entre pasadas
+bar(Tabla_Incertidumbre.Nivel, [Tabla_Incertidumbre.U_instrumento, Tabla_Incertidumbre.Desv_repetibilidad]);
+set(gca, 'YScale', 'log');
+xlabel("Nivel");
+ylabel("Velocidad (m/s)");
+legend("Instrumento (sigma_v medio)", "Dispersion entre pasadas", 'Location', 'best');
+title("Instrumento vs dispersion real");
+grid on;
+
+title(tl, "Origen de la incertidumbre");
+
+% Figura 3: Monte Carlo frente a la formula analitica
+fig_inc_mc = figure("Name", "Monte Carlo");
+tl2 = tiledlayout(1, 2, 'TileSpacing', 'compact', 'Padding', 'compact');
+
+for j = 1:2
+    ip = idx_mc(j);
+    nexttile;
+    histogram(v_sim(:, j), 60, 'Normalization', 'pdf', 'DisplayName', 'Monte Carlo');
+    hold on
+    x_pdf = linspace(min(v_sim(:, j)), max(v_sim(:, j)), 200);
+    plot(x_pdf, normpdf(x_pdf, T.Vel_Teorica(ip), T.sigma_v(ip)), 'r-', 'LineWidth', 1.5, 'DisplayName', 'Formula analitica');
+    hold off;
+    xlabel("Velocidad (m/s)");
+    ylabel("Densidad de probabilidad");
+    title(sprintf("Pasada %s: v = %.4f ± %.4f m/s", etiquetas_mc(j), T.Vel_Teorica(ip), T.sigma_v(ip)));
+    legend('Location', 'best');
+    grid on;
+end
+
+title(tl2, "Propagacion por Monte Carlo (N = 1e5)");
+
+exportgraphics(fig_inc_pasadas, fullfile(ruta_figuras, "inc_errorbar_pasadas.png"), 'Resolution', 300);
+exportgraphics(fig_inc_contrib, fullfile(ruta_figuras, "inc_contribuciones.png"), 'Resolution', 300);
+exportgraphics(fig_inc_mc, fullfile(ruta_figuras, "inc_montecarlo.png"), 'Resolution', 300);
