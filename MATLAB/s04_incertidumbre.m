@@ -45,3 +45,49 @@ for j = 1:2
     % con N = 1e5 el MC tiene un ruido de ~0.2 %, asi que ese orden de diferencia es normal
     fprintf("Diferencia relativa de sigma: %.2f %%\n\n", 100 * (mc{j}.sigma - T.sigma_v(ip)) / T.sigma_v(ip));
 end
+
+
+
+% Resumen por nivel y diferenciacion entre exceso de vel seguro o dudoso segun incertidumbre
+
+niveles = unique(T.nivel);
+matriz_inc = [];
+
+for k = 1:numel(niveles)
+    nv = niveles(k);
+    fila = (Tabla_Estadisticas_manual.Nivel == nv); % fila de este nivel en la tabla de s02
+
+    if ~any(fila)
+        continue % nivel descartado en s02 (pocas muestras)
+    end
+
+    mascara = (T.nivel == nv);
+
+    media = Tabla_Estadisticas_manual.Media(fila);
+    s_rep = Tabla_Estadisticas_manual.Desv_tipica(fila); % dispersion entre pasadas (repetibilidad)
+    u_instr = mean(T.sigma_v(mascara)); % incertidumbre media del instrumento
+    er_d_pct = 100 * er_d; % es el mismo en todas las pasadas
+    er_t_pct = 100 * mean(er_t(mascara));
+    cociente = s_rep / u_instr; % cuantas veces mayor es la dispersion que el error del sensor
+
+    nueva_fila = [nv, media, er_d_pct, er_t_pct, u_instr, s_rep, cociente];
+    matriz_inc = [matriz_inc; nueva_fila];
+end
+
+Tabla_Incertidumbre = array2table(matriz_inc);
+nombresInc = {'Nivel', 'Media', 'Er_d_pct', 'Er_t_pct', 'U_instrumento', 'Desv_repetibilidad', 'Cociente'};
+Tabla_Incertidumbre.Properties.VariableNames = nombresInc;
+disp(Tabla_Incertidumbre);
+
+% Exceso de velocidad teniendo en cuenta la incertidumbre
+exceso_seguro = (T.Vel_Teorica - T.U_v) > param.v_max; % supera el limite incluso restando U
+exceso_dudoso = abs(T.Vel_Teorica - param.v_max) <= T.U_v; % esta pegada al limite, no se puede asegurar
+T.exceso_seguro = exceso_seguro;
+T.exceso_dudoso = exceso_dudoso;
+
+fprintf("Pasadas con exceso nominal (v > limite): %.0f \n", sum(T.Vel_Teorica > param.v_max));
+fprintf("  de ellas, exceso seguro: %.0f , dudoso: %.0f \n", sum(exceso_seguro), sum(exceso_dudoso));
+
+if any(exceso_dudoso)
+    disp(T(exceso_dudoso, {'ensayo', 'n_pasada', 'Vel_Teorica', 'U_v'}));
+end
