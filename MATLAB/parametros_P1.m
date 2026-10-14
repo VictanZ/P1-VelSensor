@@ -4,6 +4,7 @@ param.sep_medidas_m = param.sep_medidas_mm / 1000; % m
 param.sep_media = mean(param.sep_medidas_m);
 param.sep_desv = std(param.sep_medidas_m);
 
+param.resol_calibre = 0.00001; % m (0.01 mm)
 param.resol_micros = 4; % microsegundos, es un dato del el arduino UNO
 param.v_max = 1; % m/s
 param.k_cobertura = 2; % factor de cobertura (~95 %)
