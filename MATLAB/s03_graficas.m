@@ -2,7 +2,7 @@ clear; close all; clc;
 
 load(fullfile('resultados', 'P1_estadistica.mat'), 'T', 'Tabla_Estadisticas_manual', 'Tabla_Excesos', 'V_global', 'param')
 
-ruta_figuras = fullfile("figuras", "graficas_P1");
+ruta_figuras = fullfile(param.ruta_figuras, "graficas_P1");
 if ~isfolder(ruta_figuras)
     mkdir(ruta_figuras);
 end
