@@ -8,10 +8,10 @@ U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE);
 // Pines
 constexpr uint8_t Pin_IR_A = 2;
 constexpr uint8_t Pin_IR_B = 3;
-constexpr uint8_t Pin_Motor = 9;
-constexpr uint8_t Pin_Boton_Subir = 6;
-constexpr uint8_t Pin_Boton_Bajar = 7;
-constexpr uint8_t Pin_Buzzer = 8;
+constexpr uint8_t Pin_Motor = 6;
+constexpr uint8_t Pin_Boton_Subir = 8;
+constexpr uint8_t Pin_Boton_Bajar = 9;
+constexpr uint8_t Pin_Buzzer = 7;
 // Sensores
 constexpr float d = 0.084f; // metros
 // Motor
